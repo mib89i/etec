@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Configurações</title>
+    </h:head>
+
+    <f:subview id="header">
+        <ui:include src="templates/header.xhtml"/>
+    </f:subview>
+
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><h:outputLink value="painel_de_controle.xhtml">Início</h:outputLink></li>
+                        <li class="active">Configurações</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>CONFIGURAÇÕES</h3>
+                    <hr />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h6 style="text-decoration: underline;">Permissões de Usuário</h6>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4 col-xs-12">
+                    <h:form>
+                        
+                    </h:form>
+                        
+                    <h:form>
+                        <h:commandButton styleClass="btn btn-default" value="Selecione um usuário para dar permissões" type="button" rendered="#{1 eq 2}">
+                            <f:passThroughAttribute name="data-toggle" value="modal"/>
+                            <f:passThroughAttribute name="data-target" value="#modal_lista_usuarios"/>
+                        </h:commandButton>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modal_lista_usuarios" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">LISTA DE USUÁRIOS</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h:dataTable var="linha_usuarios" styleClass="table table-striped">
+                                            <h:column>
+                                                <f:facet name="header">Código</f:facet>
+                                                <h:outputLabel value="0001" />
+                                            </h:column>
+
+                                            <h:column>
+                                                <f:facet name="header">Nome</f:facet>
+                                                <h:outputLabel value="IRINEL JACKS GRUTA" />
+                                            </h:column>
+                                            
+                                            <h:column>
+                                                <f:facet name="header">Login</f:facet>
+                                                <h:outputLabel value="IRINEL JACKS GRUTA" />
+                                            </h:column>
+                                        </h:dataTable>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">FECHAR</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div><!-- /container -->
+    </h:body>
+
+    <f:subview id="footer">
+        <ui:include src="templates/footer.xhtml"/>
+    </f:subview>    
+</html>
+

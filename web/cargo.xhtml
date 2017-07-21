@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Cargo</title>
+    </h:head>
+
+    <f:subview id="header">
+        <ui:include src="templates/header.xhtml"/>
+    </f:subview>
+
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><h:outputLink value="painel_de_controle.xhtml">Início</h:outputLink></li>
+                        <li><h:outputLink value="lista_cargos.xhtml">Lista de Cargos</h:outputLink></li>
+                        <li class="active">Cargo</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>CARGO</h3>
+                    <hr />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h:messages id="message_cargo" showDetail="true" class="alert #{mensagemFlash.ALERT}">
+                        <f:passThroughAttribute name="role" value="alert" />
+                    </h:messages>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <h:form id="form_cargo_lista_opcoes">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li><h:commandLink value="LISTAR CARGOS" action="#{cargoController.linkListaDeCargos()}" /></li>
+                            <li><h:commandLink value="NOVO CARGO" action="#{cargoController.linkCadastroCargo()}" /></li>
+                        </ul>
+                    </h:form>
+                </div>
+
+                <div class="col-sm-9">
+                    <h:form id="form_cargo">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="input_nome">Nome</label>
+                                    <h:inputText id="input_nome" value="#{cargoController.cargo.nome}" styleClass="form-control">
+                                        <f:ajax event="change" render="@this" />
+                                        <f:passThroughAttribute name="placeholder" value="NOME" />
+                                    </h:inputText>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+
+                    <h:form id="form_cargo_salvar">
+                        <div class="row">
+                            <div class="col-sm-3 col-xs-12">
+                                <h:commandButton styleClass="btn btn-default btn-block" value="#{(cargoController.cargo.id eq -1) ? 'SALVAR' : 'ALTERAR'}" type="button" disabled="#{(cargoController.cargo.id eq -1 and usuarioController.temPermissao('salvar_cargo') ne true) or (cargoController.cargo.id ne -1 and usuarioController.temPermissao('alterar_cargo') ne true)}">
+                                    <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                    <f:passThroughAttribute name="data-target" value="#modal_salvar"/>
+                                </h:commandButton>
+                            </div>
+
+                            <div class="col-sm-3 col-xs-12">
+                                <h:commandButton styleClass="btn btn-primary btn-block" value="EXCLUIR" type="button" disabled="#{cargoController.cargo.id eq -1 or usuarioController.temPermissao('excluir_cargo') eq false}">
+                                    <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                    <f:passThroughAttribute name="data-target" value="#modal_excluir"/>
+                                </h:commandButton>
+                            </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modal_salvar" tabindex="-1" role="dialog" aria-labelledby="myModalSalvarLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalSalvarLabel">SALVAR CARGO</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        DESEJA REALMENTE SALVAR ESTE CARGO?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">NÃO</button>
+                                        <h:commandButton styleClass="btn btn-primary" value="SIM" action="#{cargoController.salvar()}">
+                                            <f:ajax event="action" render="@form form_cargo message_cargo" />
+                                            <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                        </h:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modal_excluir" tabindex="-1" role="dialog" aria-labelledby="myModalExcluirLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalExcluirLabel">EXCLUIR CARGO</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        DESEJA REALMENTE EXCLUIR ESTE CARGO?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">NÃO</button>
+                                        <h:commandButton styleClass="btn btn-primary" value="SIM" action="#{cargoController.excluir()}">
+                                            <f:ajax event="action" render="@form form_cargo message_cargo" />
+                                            <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                        </h:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>                    
+                </div>
+            </div>
+
+        </div><!-- /container -->
+    </h:body>
+
+    <f:subview id="footer">
+        <ui:include src="templates/footer.xhtml"/>
+    </f:subview>    
+</html>
+

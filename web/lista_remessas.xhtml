@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Lista de Remessas</title>
+    </h:head>
+
+    <f:subview id="header">
+        <ui:include src="templates/header.xhtml"/>
+    </f:subview>
+
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><h:outputLink value="painel_de_controle.xhtml">Início</h:outputLink></li>
+                        <li class="active">Lista de Remessas</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>LISTA DE REMESSAS</h3>
+                    <hr />
+                </div>
+            </div>
+
+            <h:form>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li><h:commandLink value="NOVA REMESSA" action="#{remessaController.linkNovaRemessa()}" /></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-sm-9">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                <div class="form-group">
+                                    <h:inputText value="#{remessaController.numeroPesquisa}" styleClass="form-control" style="font-size: 12pt; font-weight: bold; text-align: center">
+                                        <f:ajax event="change" render="@this" />
+                                        <f:passThroughAttribute name="placeholder" value="NÚMERO DA REMESSA" />
+                                    </h:inputText>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-6 col-sm-6 col-md-3">
+                                <div class="form-group">
+                                    <h:selectOneMenu value="#{remessaController.indexListaResponsavelPesquisa}" styleClass="form-control">
+                                        <f:ajax event="change" render="@this" />
+                                        <f:selectItems value="#{remessaController.listaResponsavelPesquisa}"/>
+                                    </h:selectOneMenu> 
+                                </div>
+                            </div>
+
+                            <div class="col-xs-6 col-sm-6 col-md-3">
+                                <div class="form-group">
+                                    <h:selectOneMenu value="#{remessaController.indexListaDestinoPesquisa}" styleClass="form-control">
+                                        <f:ajax event="change" render="@this" />
+                                        <f:selectItems value="#{remessaController.listaDestinoPesquisa}"/>
+                                    </h:selectOneMenu> 
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-3">
+                                <h:commandButton styleClass="btn btn-info btn-block" value="PESQUISAR">
+                                    <f:ajax event="action" render="@form" listener="#{remessaController.loadListaRemessa()}"/>
+                                </h:commandButton>
+                            </div>
+                        </div>
+
+                        <h:dataTable value="#{remessaController.listaRemessa}" var="linha_remessa" styleClass="table table-striped">
+                            <h:column>
+                                <f:facet name="header">Data</f:facet>
+                                <h:commandLink value="#{linha_remessa.dataRemessaString}" action="#{remessaController.editar(linha_remessa)}" disabled="#{usuarioController.temPermissao('remessa') eq false}"/>
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">Número</f:facet>
+                                <h:commandLink value="#{linha_remessa.numeroString}" action="#{remessaController.editar(linha_remessa)}" disabled="#{usuarioController.temPermissao('remessa') eq false}"/>
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">Setor</f:facet>
+                                <h:commandLink value="#{linha_remessa.remessaDestino.destino}" action="#{remessaController.editar(linha_remessa)}" disabled="#{usuarioController.temPermissao('remessa') eq false}"/>
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header"></f:facet>
+                                <h:commandLink value="Imprimir Remessa" action="#{remessaController.imprimir(linha_remessa)}" target="_BLANK" />
+                            </h:column>
+                        </h:dataTable>
+                    </div>
+                </div> 
+            </h:form>
+        </div><!-- /container -->
+    </h:body>
+
+    <f:subview id="footer">
+        <ui:include src="templates/footer.xhtml"/>
+    </f:subview>    
+</html>
+

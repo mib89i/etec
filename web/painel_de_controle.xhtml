@@ -1,0 +1,489 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Painel de Controle</title>
+    </h:head>
+
+    <f:subview id="header">
+        <ui:include src="templates/header.xhtml"/>
+    </f:subview>
+
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li>Início</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>PAINEL DE CONTROLE</h3>
+                    <hr />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h:messages id="message_painel_de_controle" showDetail="true" class="alert #{mensagemFlash.ALERT}">
+                        <f:passThroughAttribute name="role" value="alert" />
+                    </h:messages>
+                </div>
+            </div>
+            <h:form>
+                <div class="row">
+                    <div class="col-xs-6 col-sm-3 col-md-2">
+                        <div class="panel panel-default panel-shadow" style="text-align: center">
+                            <div class="panel-body">
+                                <h:outputLink value="lista_pessoas.xhtml" style="font-size: 20pt">
+                                    <h:graphicImage value="resources/images/lista_pessoa.png" alt="ICON PESSOA" styleClass="img-responsive center-block" />
+                                </h:outputLink>
+                                <h:outputLink value="lista_pessoas.xhtml" style="font-size: 20pt">Pessoas</h:outputLink>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6 col-sm-3 col-md-2">
+                        <div class="panel panel-default panel-shadow" style="text-align: center">
+                            <div class="panel-body">
+                                <h:commandLink action="#{remessaController.linkListaRemessa()}">
+                                    <h:graphicImage value="resources/images/lista_remessa.png" alt="ICON REMESSA" styleClass="img-responsive center-block"/>
+                                </h:commandLink>
+                                <h:commandLink value="Remessa" action="#{remessaController.linkListaRemessa()}" style="font-size: 20pt"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6 col-sm-3 col-md-2">
+                        <div class="panel panel-default panel-shadow" style="text-align: center">
+                            <div class="panel-body">
+                                <h:outputLink value="grupo.xhtml" style="font-size: 20pt">
+                                    <h:graphicImage value="resources/images/grupo.png" alt="ICON SETORES" styleClass="img-responsive center-block"/>
+                                </h:outputLink>
+                                <h:outputLink value="grupo.xhtml" style="font-size: 20pt">Setores</h:outputLink>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h:form>
+                                MENSAGENS
+                                <h:commandButton styleClass="btn btn-info btn-xs" style="float: right" value="atualizar">
+                                    <f:ajax event="action" render=":form_mensagem" listener="#{mensagemController.loadListaMensagem()}" />
+                                </h:commandButton>
+                            </h:form>
+                        </div>
+                        <div class="panel-body" style="max-height: 200px; overflow-y: scroll;">
+                            <h:form id="form_mensagem">
+                                <h:commandButton value="ENVIAR MENSAGEM" styleClass="btn btn-default" style="float: right" disabled="#{!usuarioController.temPermissao('enviar_mensagem')}">
+                                    <f:ajax event="click" render="form_mensagem:panel_nova_mensagem" listener="#{mensagemController.novaMensagem()}" />
+                                    <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                    <f:passThroughAttribute name="data-target" value="#modal_nova_mensagem"/>
+                                </h:commandButton>
+
+                                <div style="clear: both"></div>
+
+                                <ui:repeat value="#{mensagemController.listaMensagem}" var="linha_mensagem">
+                                    <h:panelGroup layout="block" rendered="#{linha_mensagem.pessoaDestinatario.usuario.id eq usuarioController.usuarioSessao.id}">
+                                        <h6>
+                                            <div class="row">
+                                                <div class="col-xs-1" title="Mensagem Recebida de #{linha_mensagem.pessoaRemetente.nome}">
+                                                    <div style="background: red; height: 100%"></div>
+                                                </div>
+                                                <div class="col-xs-11">
+                                                    <h:outputLabel value="#{linha_mensagem.pessoaRemetente.nome}" />
+                                                </div>
+                                            </div>
+                                        </h6>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup layout="block" rendered="#{linha_mensagem.pessoaDestinatario.usuario.id ne usuarioController.usuarioSessao.id}">
+                                        <div class="row">
+                                            <div class="col-xs-1" style="background-color: green; height: 100%" title="Mensagem Enviada">
+
+                                            </div>
+
+                                            <div class="col-xs-3">
+                                                <h:outputLabel value="#{linha_mensagem.pessoaRemetente.nome}" style="font-size: 7pt"/>
+                                            </div>
+
+                                            <div class="col-xs-2">
+                                                <h:outputLabel value="PARA" style="font-size: 7pt; font-weight: bold" />
+                                            </div>
+
+                                            <div class="col-xs-4">
+                                                <h:outputLabel value="#{linha_mensagem.pessoaDestinatario.nome}" style="font-size: 7pt"/>
+                                            </div>
+                                        </div>
+                                    </h:panelGroup>
+
+                                    <h:panelGroup id="panel_link_ver_mensagem" layout="block">
+                                        <h:commandLink value="#{linha_mensagem.titulo}" style="#{linha_mensagem.dataVisualizacao eq null ? 'font-weight: bold' : ''}">
+                                            <f:ajax event="click" render="form_mensagem:panel_ver_mensagem panel_link_ver_mensagem form_mensagem:panel_btn_excluir_mensagem" listener="#{mensagemController.ver(linha_mensagem)}"/>
+                                            <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                            <f:passThroughAttribute name="data-target" value="#modal_ver_mensagem"/>
+                                        </h:commandLink>
+                                        <img src="#{facesContext.externalContext.requestContextPath}/resources/images/#{linha_mensagem.dataVisualizacaoString ne '' ? 'check_message.png' : 'uncheck_message.png'}" alt="CARREGANDO" style="width: 15px" title="#{(linha_mensagem.dataVisualizacaoString ne '') ? ('Visualizado ').concat(linha_mensagem.dataVisualizacaoString).concat(' às ').concat(linha_mensagem.horaVisualizacao) : ''}"/>
+                                    </h:panelGroup>
+
+                                    <br />
+                                    <h:outputLabel value="#{linha_mensagem.dataString} às #{linha_mensagem.hora}" style="font-size: 7pt"/>
+                                    <hr />
+                                </ui:repeat>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="modal_nova_mensagem" tabindex="-1" role="dialog" aria-labelledby="myModalNovaMensagem">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalNovaMensagem">NOVA MENSAGEM</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <h:panelGroup id="panel_nova_mensagem" layout="block">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <h:messages showDetail="true" class="alert #{mensagemFlash.ALERT}">
+                                                                <f:passThroughAttribute name="role" value="alert" />
+                                                            </h:messages>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            Enviar Mensagem para: 
+                                                            <h:commandLink value="#{(mensagemController.mensagem.pessoaDestinatario.id eq -1) ? 'Selecionar um Usuário' : mensagemController.mensagem.pessoaDestinatario.nome}" onclick="loadSelecionarUsuarioMensagemFixed()">
+                                                                <f:ajax event="action" render="form_selecionar_usuario:panel_selecionar_usuario" listener="#{mensagemController.loadListaPessoaMensagem()}"/>
+                                                                <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                                            </h:commandLink>
+                                                        </div>
+                                                    </div>
+                                                    <br />
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <p>TÍTULO</p>
+                                                            <p>
+                                                                <h:inputText value="#{mensagemController.mensagem.titulo}" styleClass="form-control">
+                                                                    <f:ajax event="change" render="@this" />
+                                                                </h:inputText>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <p>MENSAGEM</p>
+                                                            <p>
+                                                                <h:inputTextarea value="#{mensagemController.mensagem.texto}" styleClass="form-control" rows="2">
+                                                                    <f:ajax event="change" render="@this" />
+                                                                </h:inputTextarea>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </h:panelGroup>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">CANCELAR</button>
+                                                <h:commandButton styleClass="btn btn-primary" value="SALVAR">
+                                                    <f:ajax event="action" listener="#{mensagemController.salvarMensagem()}" />
+                                                </h:commandButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="modal_ver_mensagem" tabindex="-1" role="dialog" aria-labelledby="myModalVerMensagem">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalVerMensagem">Mensagem</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <h:panelGroup id="panel_ver_mensagem" layout="block">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <h:messages showDetail="true" class="alert #{mensagemFlash.ALERT}">
+                                                                <f:passThroughAttribute name="role" value="alert" />
+                                                            </h:messages>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-xs-5">
+                                                            <h:outputLabel value="#{mensagemController.mensagem.pessoaRemetente.nome}" style="font-size: 7pt"/>
+                                                        </div>
+
+                                                        <div class="col-xs-2">
+                                                            <h:outputLabel value="PARA" style="font-size: 7pt; font-weight: bold" />
+                                                        </div>
+
+                                                        <div class="col-xs-5">
+                                                            <h:outputLabel value="#{mensagemController.mensagem.pessoaDestinatario.nome}" style="font-size: 7pt"/>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <p><h4><b>TÍTULO</b></h4></p>
+                                                            <p><h5>#{mensagemController.mensagem.titulo}</h5></p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <p><h4><b>MENSAGEM</b></h4></p>
+                                                            <p><h5>#{mensagemController.mensagem.texto}</h5></p>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <hr />
+                                                    <h6>RESPOSTAS</h6>
+                                                    <ui:repeat value="#{mensagemController.listaMensagemResposta}" var="linha_mensagem_resposta">
+                                                        <div class="panel" style="background: #f4f4f4">
+                                                            <h:outputLabel value="#{linha_mensagem_resposta.pessoa.nome}" style="font-size: 7pt; color: blue"/>
+
+                                                            <p><h4><h:outputLabel value="#{linha_mensagem_resposta.texto}" /></h4></p>
+
+                                                            <h:outputLabel value="#{linha_mensagem_resposta.dataString} às #{linha_mensagem_resposta.hora}" style="font-size: 7pt"/>
+                                                        </div>
+                                                    </ui:repeat>
+
+                                                    <br />
+
+                                                    <h:inputTextarea styleClass="form-control" value="#{mensagemController.mensagemResposta.texto}" rows="2">
+                                                        <f:ajax event="change" render="@this" />
+                                                    </h:inputTextarea>
+                                                    <br />
+                                                    <h:commandButton styleClass="btn btn-info btn-xs" value="Enviar" type="button" style="float: right">
+                                                        <f:ajax event="action" render="form_mensagem:panel_ver_mensagem" listener="#{mensagemController.responderMensagem()}"/>
+                                                    </h:commandButton>
+                                                    <br />
+                                                </h:panelGroup>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <h:panelGroup id="panel_btn_excluir_mensagem" layout="block">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">FECHAR</button>
+                                                    <h:commandButton styleClass="btn btn-primary" value="EXCLUIR" rendered="#{mensagemController.mensagem.pessoaRemetente.usuario.id eq usuarioController.usuarioSessao.id}">
+                                                        <f:ajax event="action" listener="#{mensagemController.excluirMensagem()}" />
+                                                    </h:commandButton>
+                                                </h:panelGroup>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>       
+
+                            </h:form>
+
+                            <h:form id="form_selecionar_usuario">
+                                <!-- Modal -->
+                                <div class="modal fade" id="modal_selecionar_usuario" tabindex="-1" role="dialog" aria-labelledby="myModalSelecionarUsuario">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" data-toggle="modal" data-target="#modal_nova_mensagem" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalSelecionarUsuario">Pesquisa de Usuários</h4>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <h:panelGroup id="panel_selecionar_usuario" layout="block">
+                                                    <div class="row">
+                                                        <div class="col-xs-9">
+                                                            <h:inputText id="input_pesquisa_permissao" value="#{mensagemController.descricaoPesquisaPessoa}" styleClass="form-control">
+                                                                <f:ajax event="change" render="@this" />
+                                                                <f:passThroughAttribute name="placeholder" value="PESQUISE O USUÁRIO" />
+                                                            </h:inputText>
+                                                        </div>
+
+                                                        <div class="col-xs-3">
+                                                            <h:commandButton styleClass="btn btn-info btn-block" value="PESQUISAR">
+                                                                <f:ajax event="action" render="form_selecionar_usuario:table_usuario" listener="#{mensagemController.loadListaPessoaMensagem(false)}"/>
+                                                            </h:commandButton>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <h:dataTable id="table_usuario" value="#{mensagemController.listaPessoaMensagem}" var="linha_pessoa_mensagem" styleClass="table table-striped">
+                                                                <h:column>
+                                                                    <f:facet name="header">Código</f:facet>
+                                                                    <h:outputLabel value="" />
+                                                                    <h:commandLink value="#{linha_pessoa_mensagem.id}" action="#{mensagemController.selecionarPessoa(linha_pessoa_mensagem)}">
+                                                                        <f:ajax event="action" render=":panel_nova_mensagem" />
+                                                                        <f:passThroughAttribute name="data-toggle" value="modal" />
+                                                                        <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                                                        <f:passThroughAttribute name="data-target" value="#modal_nova_mensagem"/>                                                                    
+                                                                    </h:commandLink>
+                                                                </h:column>
+
+                                                                <h:column>
+                                                                    <f:facet name="header">Nome</f:facet>
+                                                                    <h:commandLink value="#{linha_pessoa_mensagem.nome}" action="#{mensagemController.selecionarPessoa(linha_pessoa_mensagem)}">
+                                                                        <f:ajax event="action" render="form_mensagem:panel_nova_mensagem" />
+                                                                        <f:passThroughAttribute name="data-toggle" value="modal" />
+                                                                        <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                                                        <f:passThroughAttribute name="data-target" value="#modal_nova_mensagem"/>                                                                    
+                                                                    </h:commandLink>
+                                                                </h:column>
+
+                                                                <h:column>
+                                                                    <f:facet name="header">Usuário</f:facet>
+                                                                    <h:commandLink value="#{linha_pessoa_mensagem.usuario.usuario}" action="#{mensagemController.selecionarPessoa(linha_pessoa_mensagem)}">
+                                                                        <f:ajax event="action" render=":panel_nova_mensagem" />
+                                                                        <f:passThroughAttribute name="data-toggle" value="modal" />
+                                                                        <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                                                        <f:passThroughAttribute name="data-target" value="#modal_nova_mensagem"/>                                                                    
+                                                                    </h:commandLink>
+                                                                </h:column>
+                                                            </h:dataTable>    
+                                                        </div>
+                                                    </div>
+
+                                                </h:panelGroup>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <h:commandButton type="button" value="FECHAR" styleClass="btn btn-default">
+                                                    <f:passThroughAttribute name="data-toggle" value="modal" />
+                                                    <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                                    <f:passThroughAttribute name="data-target" value="#modal_nova_mensagem"/>                                                                    
+                                                </h:commandButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>     
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">BLOCO DE NOTAS</div>
+                        <div class="panel-body" style="max-height: 200px; overflow-y: scroll;">
+                            <h:form id="form_nova_nota">
+                                <h:commandButton styleClass="btn btn-default" value="CRIAR NOTA" type="button" style="float: right" disabled="#{!usuarioController.temPermissao('criar_nota')}">
+                                    <f:ajax event="click" render="form_nova_nota:panel_nota message_painel_de_controle" listener="#{notaController.novaNota()}" />
+                                    <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                    <f:passThroughAttribute name="data-target" value="#modal_nova_nota"/>
+                                </h:commandButton>
+                                <br />
+                                <ui:repeat value="#{notaController.listaNota}" var="linha_nota">
+                                    <h5 style="font-weight: bold">
+                                        <h:commandLink value="#{linha_nota.nome}">
+                                            <f:ajax event="click" render="form_nova_nota:panel_nota message_painel_de_controle" listener="#{notaController.editarNota(linha_nota)}"/>
+                                            <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                            <f:passThroughAttribute name="data-target" value="#modal_nova_nota"/>
+                                        </h:commandLink>
+                                    </h5>
+                                    <h:outputText value="#{(linha_nota.texto.length() ge 60) ? linha_nota.texto.substring(0, 60).concat(' ...') : linha_nota.texto}" escape="false"/>
+                                    <br />
+
+                                    <h:commandButton styleClass="btn btn-info btn-xs" value="Excluir" type="button" style="float: right">
+                                        <f:ajax event="click" render="form_nova_nota:panel_excluir_nota message_painel_de_controle" listener="#{notaController.editarNota(linha_nota)}" />
+                                        <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                        <f:passThroughAttribute name="data-target" value="#modal_excluir_nota"/>
+                                    </h:commandButton>
+                                    <h:commandButton styleClass="btn btn-success btn-xs" value="Editar" type="button" style="float: right">
+                                        <f:ajax event="click" render="form_nova_nota:panel_nota" listener="#{notaController.editarNota(linha_nota)}" />
+                                        <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                        <f:passThroughAttribute name="data-target" value="#modal_nova_nota"/>
+                                    </h:commandButton>
+                                    <br />
+                                    <hr />
+                                </ui:repeat>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="modal_nova_nota" tabindex="-1" role="dialog" aria-labelledby="myModalNovaNota">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalNovaNota">NOTA</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <h:panelGroup id="panel_nota" layout="block">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <p>NOME</p>
+                                                            <p>
+                                                                <h:inputText value="#{notaController.nota.nome}" styleClass="form-control">
+                                                                    <f:ajax event="change" render="@this" />
+                                                                </h:inputText>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <p>TEXTO</p>
+                                                            <p>
+                                                                <h:inputTextarea value="#{notaController.nota.texto}" styleClass="form-control" rows="10">
+                                                                    <f:ajax event="change" render="@this" />
+                                                                </h:inputTextarea>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </h:panelGroup>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">CANCELAR</button>
+                                                <h:commandButton styleClass="btn btn-primary" value="SALVAR" action="#{notaController.salvarNota()}">
+                                                    <f:ajax event="action" render="@form :message_painel_de_controle" />
+                                                    <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                                </h:commandButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="modal_excluir_nota" tabindex="-1" role="dialog" aria-labelledby="myModalExcluirNota">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalExcluirNota">EXCLUIR NOTA</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <h:panelGroup id="panel_excluir_nota" layout="block">
+                                                    <h5>DESEJA REALMENTE EXCLUIR ESTA NOTA?</h5>
+                                                    <h6 style="font-weight: bold">#{notaController.nota.nome}</h6>
+                                                </h:panelGroup>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">CANCELAR</button>
+                                                <h:commandButton styleClass="btn btn-primary" value="EXCLUIR" action="#{notaController.excluirNota()}">
+                                                    <f:ajax event="action" render="@form :message_painel_de_controle" />
+                                                    <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                                </h:commandButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </h:body>
+
+    <f:subview id="footer">
+        <ui:include src="templates/footer.xhtml"/>
+    </f:subview>
+</html>
+

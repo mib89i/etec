@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Protocolo de Documentos</title>
+    </h:head>
+
+    <f:subview id="header">
+        <ui:include src="templates/header.xhtml"/>
+    </f:subview>
+
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><h:outputLink value="painel_de_controle.xhtml">Início</h:outputLink></li>
+                        <li><h:outputLink value="lista_protocolo.xhtml">Lista de Protocolo</h:outputLink></li>
+                        <li class="active">Protocolo de Documentos</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>PROTOCOLO</h3>
+                    <hr />
+                </div>
+            </div>
+            
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h:form id="form_protocolo_lista_opcoes">
+                            
+                        </h:form>
+                    </div>
+                    
+                    <div class="col-sm-9">
+                        <h:form id="form_protocolo" enctype="multipart/form-data">
+                            
+                        </h:form>
+                    </div>
+        </div><!-- /container -->
+    </h:body>
+    
+
+    <f:subview id="footer">
+        <ui:include src="templates/footer.xhtml"/>
+    </f:subview>    
+</html>
+

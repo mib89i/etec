@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="REMESSA" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="918177cf-074c-4f87-a282-615028169cf2">
+	<property name="ireport.zoom" value="2.3579476910000023"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="58"/>
+	<parameter name="logo" class="java.lang.String"/>
+	<parameter name="serrilha" class="java.lang.String"/>
+	<field name="copia" class="java.lang.Integer"/>
+	<field name="numero" class="java.lang.String"/>
+	<field name="ano" class="java.lang.String"/>
+	<field name="para" class="java.lang.String"/>
+	<field name="motivo" class="java.lang.String"/>
+	<field name="ordem" class="java.lang.String"/>
+	<field name="processo" class="java.lang.String"/>
+	<field name="envio" class="java.lang.String"/>
+	<field name="data_remessa" class="java.util.Date"/>
+	<field name="usuario" class="java.lang.String"/>
+	<field name="responsavel" class="java.lang.String"/>
+	<group name="group_remessa">
+		<groupExpression><![CDATA[$F{copia}]]></groupExpression>
+		<groupHeader>
+			<band height="159">
+				<staticText>
+					<reportElement x="0" y="106" width="15" height="12" uuid="0fd76647-5c6f-4849-a4ba-3c4bab37c126"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[DE:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="118" width="26" height="12" uuid="7862f51e-366d-410d-8b4a-4fd1f84f375e"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[PARA:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="15" y="106" width="540" height="12" uuid="80978616-02da-43e8-a9b8-4026d0e983ad"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[138 – ETEC Prof. "Armando José Farinazzo" ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="130" width="37" height="12" uuid="f2b5a2cf-11e5-4630-a92b-65d15be86b85"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[MOTIVO:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="142" width="85" height="16" backcolor="#E0DEDE" uuid="58096c3f-6873-4e5c-aa0a-235942d689af"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[ORDEM]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="88" y="142" width="85" height="16" backcolor="#E0DEDE" uuid="8f242710-3f1a-45ca-bff7-e2628ad71cb2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[PROCESSO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="176" y="142" width="379" height="16" backcolor="#E0DEDE" uuid="76aac57c-e740-406a-af6a-a6576fab22e2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[ENVIO]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="37" y="130" width="518" height="12" uuid="e69dbcf3-f81e-47a8-8c3f-6f69bc87db92"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{motivo}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="26" y="118" width="529" height="12" uuid="27ee5b42-7c1c-4835-85d3-e54c4b9d723a"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{para}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="0" y="76" width="555" height="18" backcolor="#E3E3E3" uuid="e090cd28-8576-4e44-afe1-3c0a7322c8ff"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA["N°. " + $F{numero} + "/" + $F{ano}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="94" width="555" height="12" uuid="bed072ab-9bdc-4eae-a120-f88f82996de8"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[RELAÇÃO DE REMESSA]]></text>
+				</staticText>
+				<image scaleImage="FillFrame" hAlign="Center" vAlign="Middle" isUsingCache="false">
+					<reportElement x="0" y="0" width="555" height="76" uuid="c37fb9bb-2de4-426f-ab79-cc8ea1b4e526"/>
+					<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+				</image>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="59">
+				<staticText>
+					<reportElement x="0" y="15" width="73" height="16" uuid="a8d9ae9c-2654-4950-9f86-5eba9e3cfff9"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[FERNANDÓPOLIS]]></text>
+				</staticText>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement x="73" y="15" width="141" height="16" uuid="ab78bf38-f9b6-44f2-8696-889138ccd0d9"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{data_remessa}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="214" y="15" width="32" height="16" uuid="9c22042a-0203-4201-ad96-716ca0bb1bc0"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[RECEBI]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="246" y="15" width="86" height="16" uuid="d65b313c-497d-4ef0-9552-21c052a3f537"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA["_____/___/"+$F{ano}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="332" y="15" width="223" height="16" uuid="f606450d-c95d-4738-aef0-4416c43dac75"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<text><![CDATA[NOME LEGÍVEL: ______________________________]]></text>
+				</staticText>
+				<image>
+					<reportElement x="0" y="45" width="555" height="14" uuid="932703ce-2609-48a0-af13-eb5c6583ff44"/>
+					<imageExpression><![CDATA[$P{serrilha}]]></imageExpression>
+				</image>
+				<textField>
+					<reportElement x="0" y="31" width="555" height="14" uuid="4f0f7365-d5b6-47b0-a975-68b4f92d1b41"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{usuario}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="367" y="0" width="188" height="16" uuid="47a621cc-864e-44bf-9aef-c678f1692a9f"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA["A/C: " + $F{responsavel}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="85" height="18" uuid="98f65a2d-9191-4986-ae8f-ece70b45f408"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ordem}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="176" y="0" width="379" height="18" uuid="46b226da-61db-4a85-a931-506c44793ba6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{envio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="88" y="0" width="85" height="18" uuid="23c07ffa-6131-4830-a167-2a8d17729695"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{processo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

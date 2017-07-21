@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Grupo</title>
+    </h:head>
+
+    <f:subview id="header">
+        <ui:include src="templates/header.xhtml"/>
+    </f:subview>
+    
+    <f:metadata>  
+        <f:event type="preRenderView" listener="#{grupoController.loadPagina}"/>
+    </f:metadata>
+    
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><h:outputLink value="painel_de_controle.xhtml">Início</h:outputLink></li>
+                        <li class="active">Grupo</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>GRUPO</h3>
+                    <hr />
+                </div>
+            </div>
+            <h:form>
+                <h:messages id="message" showDetail="true" class="alert #{mensagemFlash.ALERT}">
+                    <f:passThroughAttribute name="role" value="alert" />
+                </h:messages>
+
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="list-group">
+                            <ui:repeat value="#{grupoController.listaGrupo}" var="linha_grupo">
+                                <h:commandLink styleClass="list-group-item #{grupoController.grupo.id eq linha_grupo.id ? 'active' : ''}" value="#{linha_grupo.nome}" action="#{grupoController.editar(linha_grupo)}" onclick="loadStatusFixed()"/>
+                            </ui:repeat>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9">
+                        <h4>Permissões do Grupo <b>#{grupoController.grupo.nome}</b></h4>
+                        <div class="row">
+                            <div class="col-xs-9">
+                                <h:inputText id="input_pesquisa_permissao" value="#{grupoController.descricaoPesquisa}" styleClass="form-control">
+                                    <f:ajax event="change" render="@this" />
+                                    <f:passThroughAttribute name="placeholder" value="DIGITE O NOME DA PÁGINA OU PERMISSÃO" />
+                                </h:inputText>
+                            </div>
+
+                            <div class="col-xs-3">
+                                <h:commandButton styleClass="btn btn-info btn-block" value="PESQUISAR" action="#{grupoController.loadListaPagina()}" onclick="loadStatusFixed()">
+                                    
+                                </h:commandButton>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <ui:repeat value="#{grupoController.listaPagina}" var="linha_pagina">
+                                <div class="col-sm-3">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <b>#{linha_pagina.pagina.nome}</b>
+                                        </div>
+
+                                        <div class="panel-body">
+                                            <ui:repeat value="#{linha_pagina.listaPermissaoCheck}" var="linha_permissao">
+                                                <h:selectBooleanCheckbox value="#{linha_permissao.check}" disabled="#{usuarioController.temPermissao('alterar_permissao_grupo') eq false}">
+                                                    <f:ajax event="change" listener="#{grupoController.editarPermissaoPagina(linha_permissao)}" render="@form"/>
+                                                </h:selectBooleanCheckbox>
+
+                                                <h:outputLabel value="#{linha_permissao.permissao.nome}" style="margin-left: 5px" title="#{linha_permissao.permissao.descricao}" />
+                                                <br />
+                                            </ui:repeat>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ui:repeat>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </div><!-- /container -->
+    </h:body>
+
+    <f:subview id="footer">
+        <ui:include src="templates/footer.xhtml"/>
+    </f:subview>    
+</html>
+

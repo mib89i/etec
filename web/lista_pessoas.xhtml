@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Lista de Pessoas</title>
+    </h:head>
+
+    <f:subview id="header">
+        <ui:include src="templates/header.xhtml"/>
+    </f:subview>
+
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><h:outputLink value="painel_de_controle.xhtml">Início</h:outputLink></li>
+                        <li class="active">Lista de Pessoas</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>LISTA DE PESSOAS</h3>
+                    <hr />
+                </div>
+            </div>
+            <h:form id="form_lista_pessoas">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <ul class="nav nav-pills nav-stacked">
+                            <c:choose>
+                                <c:when test="#{usuarioController.temPermissao('pessoa')}">
+                                    <li>
+                                        <h:commandLink value="NOVO CADASTRO" action="#{pessoaController.linkCadastroPessoa()}"/>
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="disabled">
+                                        <a href="#" title="Sem permissão para acessar esta página!">CADASTRAR NOVO</a>
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
+                        </ul>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="row">
+                            <div class="col-xs-7 col-sm-6">
+                                <h:inputText id="input_pesquisa_pessoa" value="#{pessoaController.descricaoPesquisa}" styleClass="form-control">
+                                    <f:ajax event="change" render="@this" />
+                                    <f:passThroughAttribute name="placeholder" value="DIGITE SUA PESQUISA" />
+                                </h:inputText>
+                            </div>
+
+                            <div class="col-xs-5 col-sm-3">
+                                <h:selectOneMenu value="#{pessoaController.porPesquisa}" styleClass="form-control">
+                                    <f:ajax event="change" render="@this" />
+                                    <f:selectItem itemValue="codigo"     itemLabel="Código"/>
+                                    <f:selectItem itemValue="nome"       itemLabel="Nome"/>
+                                    <f:selectItem itemValue="sobre_nome" itemLabel="Sobre Nome"/>
+                                    <f:selectItem itemValue="cpf"        itemLabel="CPF"/>
+                                    <f:selectItem itemValue="usuario"    itemLabel="Usuário"/>
+                                </h:selectOneMenu> 
+                            </div>
+
+                            <div class="col-xs-12 col-sm-3">
+                                <h:commandButton styleClass="btn btn-info btn-block" value="PESQUISAR">
+                                    <f:ajax event="action" render="@form" listener="#{pessoaController.loadListaPessoa()}"/>
+                                </h:commandButton>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="table-responsive">
+                            <h:dataTable value="#{pessoaController.listaPessoa}" var="linha_pessoa" styleClass="table table-striped">
+                                <h:column>
+                                    <f:facet name="header">Código</f:facet>
+                                    <h:commandLink value="#{linha_pessoa.id}" action="#{pessoaController.editar(linha_pessoa)}" disabled="#{usuarioController.temPermissao('pessoa') eq false}"/>
+                                </h:column>
+
+                                <h:column>
+                                    <f:facet name="header">Nome</f:facet>
+                                    <h:commandLink value="#{linha_pessoa.nome}" action="#{pessoaController.editar(linha_pessoa)}" disabled="#{usuarioController.temPermissao('pessoa') eq false}"/>
+                                </h:column>
+
+                                <h:column>
+                                    <f:facet name="header">Sobre Nome</f:facet>
+                                    <h:commandLink value="#{linha_pessoa.sobreNome}" action="#{pessoaController.editar(linha_pessoa)}" disabled="#{usuarioController.temPermissao('pessoa') eq false}"/>
+                                </h:column>
+
+                                <h:column>
+                                    <f:facet name="header">CPF</f:facet>
+                                    <h:commandLink value="#{linha_pessoa.documento}" action="#{pessoaController.editar(linha_pessoa)}" disabled="#{usuarioController.temPermissao('pessoa') eq false}"/>
+                                </h:column>
+
+                                <h:column>
+                                    <f:facet name="header">Usuário</f:facet>
+                                    <h:commandLink value="#{linha_pessoa.usuario.usuario}" action="#{pessoaController.editar(linha_pessoa)}" disabled="#{usuarioController.temPermissao('pessoa') eq false}"/>
+                                </h:column>
+                            </h:dataTable>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </div><!-- /container -->
+    </h:body>
+
+    <f:subview id="footer">
+        <ui:include src="templates/footer.xhtml"/>
+    </f:subview>    
+</html>
+

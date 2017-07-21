@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Lista de Protocolos</title>
+    </h:head>
+
+    <f:subview id="header">
+        <ui:include src="templates/header.xhtml"/>
+    </f:subview>
+
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><h:outputLink value="painel_de_controle.xhtml">Início</h:outputLink></li>
+                        <li class="active">Lista de Protocolos</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>LISTA DE PROTOCOLOS</h3>
+                    <hr />
+                </div>
+            </div>
+            <h:form id="form_lista_protocolo">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <ul class="nav nav-pills nav-stacked">
+                            <c:choose>
+                                <c:when test="#{usuarioController.temPermissao('protocolo')}">
+                                    <li>
+                                        <h:commandLink value="NOVO PROTOCOLO" action="#{protocoloController.linkCadastroProtocolo()}"/>
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="disabled">
+                                        <a href="#" title="Sem permissão para acessar esta página!">NOVO PROTOCOLO</a>
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-sm-9">
+                        <div class="row">
+                            <div class="col-xs-7 col-sm-6">
+                                <h:inputText id="input_pesquisa_pessoa" value="#{protocoloController.descricaoPesquisa}" styleClass="form-control">
+                                    <f:ajax event="change" render="@this" />
+                                    <f:passThroughAttribute name="placeholder" value="DIGITE SUA PESQUISA" />
+                                </h:inputText>
+                            </div>
+
+                            <div class="col-xs-5 col-sm-3">
+                                <h:selectOneMenu value="#{protocoloController.porPesquisa}" styleClass="form-control">
+                                    <f:ajax event="change" render="@this" />
+                                    <f:selectItem itemValue="numero"  itemLabel="Número"/>
+                                    <f:selectItem itemValue="setor"   itemLabel="Setor"/>
+                                    <f:selectItem itemValue="empresa" itemLabel="Empresa"/>
+                                    <f:selectItem itemValue="usuario" itemLabel="Usuário"/>
+                                </h:selectOneMenu> 
+                            </div>
+
+                            <div class="col-xs-12 col-sm-3">
+                                <h:commandButton styleClass="btn btn-info btn-block" value="PESQUISAR">
+                                    <f:ajax event="action" render="@form" listener="#{protocoloController.loadListaProtocolo()}"/>
+                                </h:commandButton>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="table-responsive">
+                            <h:dataTable value="#{protocoloController.listaProtocolo}" var="linha_protocolo" styleClass="table table-striped">
+                                <h:column>
+                                    <f:facet name="header">Código</f:facet>
+                                    
+                                </h:column>
+
+                                <h:column>
+                                    <f:facet name="header">Nome</f:facet>
+                                    
+                                </h:column>
+                            </h:dataTable>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </div><!-- /container -->
+    </h:body>
+    
+
+    <f:subview id="footer">
+        <ui:include src="templates/footer.xhtml"/>
+    </f:subview>    
+</html>
+

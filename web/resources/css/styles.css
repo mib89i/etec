@@ -1,0 +1,13 @@
+.panel-shadow{
+    -moz-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3); -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3); box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.vertical-align {
+    display: flex;
+    align-items: center;
+}
+
+.no-padding {
+    padding: 0 !important;
+    margin: 0 !important;
+}

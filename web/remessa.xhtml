@@ -1,0 +1,486 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Remessa</title>
+    </h:head>
+
+    <f:subview id="header">
+        <ui:include src="templates/header.xhtml"/>
+    </f:subview>
+
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><h:outputLink value="painel_de_controle.xhtml">Início</h:outputLink></li>
+                        <li><h:outputLink value="lista_remessas.xhtml">Lista de Remessas</h:outputLink></li>
+                        <li class="active">Remessa</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>REMESSA</h3>
+                    <hr />
+                </div>
+            </div>
+
+            <h:form id="form_remessa">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li><h:commandLink value="LISTA DE REMESSAS" action="#{remessaController.linkListaRemessa()}" /></li>
+                            <li><h:commandLink value="NOVA REMESSA" action="#{remessaController.linkNovaRemessa()}" /></li>
+                            <c:choose>
+                                <c:when test="#{(remessaController.remessa.id eq -1 or usuarioController.temPermissao('imprimir_remessa') eq false) ?  'true' : 'false'}">
+                                    <li class="disabled">
+                                        <a href="#">IMPRIMIR REMESSA</a>
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li>
+                                        <h:commandLink value="IMPRIMIR REMESSA" action="#{remessaController.imprimirRemessa()}" target="_BLANK" />
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
+                        </ul>
+                    </div>
+
+                    <div class="col-sm-9">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h:messages id="message_remessa" showDetail="true" class="alert #{mensagemFlash.ALERT}">
+                                    <f:passThroughAttribute name="role" value="alert" />
+                                </h:messages>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="input_numero">Número da Remessa</label>
+                                    <h:inputText id="input_numero" value="#{remessaController.remessa.numeroString}" styleClass="form-control" disabled="true" style="font-size: 13pt; font-weight: bold; text-align: center">
+                                        <f:ajax event="change" render="@this" />
+                                    </h:inputText>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-10 col-sm-6">
+                                <div class="form-group">
+                                    <label for="input_destino">Destino</label>
+                                    <h:selectOneMenu id="select_remessa_destino" value="#{remessaController.indexRemessaDestino}" styleClass="form-control">
+                                        <f:ajax event="change" listener="#{remessaController.loadListaPessoaResponsavelSetor()}" render="@this select_remessa_destino_pessoa" />
+                                        <f:selectItems value="#{remessaController.listaRemessaDestino}" />
+                                    </h:selectOneMenu> 
+                                </div>
+                            </div>
+
+                            <div class="col-xs-2 col-sm-1">
+                                <div class="form-group">
+                                    <label for="btn_destino">.</label>
+                                    <h:commandButton styleClass="btn btn-default btn-block" value="+" type="button" disabled="#{usuarioController.temPermissao('salvar_remessa_destino') ne true}">
+                                        <f:ajax event="action" listener="#{remessaController.novaRemessaDestino(false)}" render="form_remessa:panel_remessa_destino" />
+                                        <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                        <f:passThroughAttribute name="data-target" value="#modal_remessa_destino"/>
+                                    </h:commandButton>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-5">
+                                <div class="form-group">
+                                    <label for="input_numero">Responsável Pelo Setor</label>
+                                    <h:selectOneMenu id="select_remessa_destino_pessoa" value="#{remessaController.indexPessoaResponsavelSetor}" styleClass="form-control">
+                                        <f:ajax event="change" render="@this" />
+                                        <f:selectItems value="#{remessaController.listaPessoaResponsavelSetor}" />
+                                    </h:selectOneMenu> 
+                                </div>
+                            </div>                 
+                        </div>
+
+                        <div class="panel panel-default" style="background: #f2f2f2;">
+                            <div class="panel" style="background: #f2f2f2; padding: 10px">
+                                <h4><b>Detalhes da Remessa</b></h4>
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <div class="form-group">
+                                            <label for="input_ordem">Ordem</label>
+                                            <h:inputText id="input_ordem" value="#{remessaController.remessaDetalhe.ordem}" styleClass="form-control" style="text-align: center">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="NÚMERO ORDEM ex. 21" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6">
+                                        <div class="form-group">
+                                            <label for="input_processo">Processo</label>
+                                            <h:inputText id="input_processo" value="#{remessaController.remessaDetalhe.processo}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="NÚMERO PROCESSO ex. 0796/2011" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="form-group">
+                                            <label for="textarea_envio">Envio</label>
+                                            <h:inputTextarea id="textarea_envio" value="#{remessaController.remessaDetalhe.envio}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="DESCRIÇÃO ENVIO" />
+                                            </h:inputTextarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-3 col-lg-2">
+                                        <br />
+                                        <h:commandButton styleClass="btn btn-default btn-block" value="#{remessaController.remessaDetalhe.id eq -1 ? 'ADICIONAR' : 'SALVAR' }" type="button" action="#{remessaController.adicionarRemessaDetalhe()}">
+                                            <f:ajax event="action" render="form_remessa"/>
+                                        </h:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <h:dataTable id="tbl_remessa_detalhe" value="#{remessaController.listaRemessaDetalhe}" var="linha_remessa_detalhe" styleClass="table table-striped" binding="#{dataTableHtml.dataTable}">
+                                <h:column>
+                                    <f:facet name="header">
+                                        <f:verbatim><div style="text-align: center">Ordem</div></f:verbatim>
+                                    </f:facet>
+                                    <div style="text-align: center">
+                                        <h:commandLink value="#{linha_remessa_detalhe.ordem eq '' ? '-' : linha_remessa_detalhe.ordem}">
+                                            <f:ajax event="action" listener="#{remessaController.selecionaRemessaDetalhe(linha_remessa_detalhe, dataTableHtml.dataTable.rowIndex)}" render="@form"/>
+                                        </h:commandLink>
+                                    </div>
+                                </h:column>
+
+                                <h:column>
+                                    <f:facet name="header">
+                                        <f:verbatim><div style="text-align: center">Processo</div></f:verbatim>
+                                    </f:facet>
+                                    <div style="text-align: center">
+                                        <h:commandLink value="#{linha_remessa_detalhe.processo eq '' ? '-' : linha_remessa_detalhe.processo}">
+                                            <f:ajax event="action" listener="#{remessaController.selecionaRemessaDetalhe(linha_remessa_detalhe, dataTableHtml.dataTable.rowIndex)}" render="@form"/>
+                                        </h:commandLink>
+                                    </div>
+                                </h:column>
+
+                                <h:column>
+                                    <f:facet name="header">Envio</f:facet>
+                                    <h:commandLink value="#{linha_remessa_detalhe.envio}">
+                                        <f:ajax event="action" listener="#{remessaController.selecionaRemessaDetalhe(linha_remessa_detalhe, dataTableHtml.dataTable.rowIndex)}" render="@form"/>
+                                    </h:commandLink>
+                                </h:column>
+
+                                <h:column>
+                                    <f:facet name="header"></f:facet>
+                                    <h:commandLink styleClass="btn btn-default btn-block" type="button" title="REMOVER ESTA REMESSA DETALHE">
+                                        <f:ajax event="action" listener="#{remessaController.selecionaRemessaDetalhe(linha_remessa_detalhe, dataTableHtml.dataTable.rowIndex)}"/>
+                                        <span class="glyphicon glyphicon-remove">
+                                            <f:passThroughAttribute name="aria-hidden" value="true"/>
+                                        </span>
+                                        <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                        <f:passThroughAttribute name="data-target" value="#modal_remover_detalhe_remessa"/>
+                                    </h:commandLink>
+                                </h:column>
+                            </h:dataTable>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-sm-3 col-xs-12">
+                                <h:commandButton styleClass="btn btn-default btn-block" value="#{(remessaController.remessa.id eq -1) ? 'SALVAR REMESSA' : 'ALTERAR REMESSA'}" type="button" disabled="#{(remessaController.remessa.id eq -1 and usuarioController.temPermissao('salvar_remessa') ne true) or (remessaController.remessa.id ne -1 and usuarioController.temPermissao('alterar_remessa') ne true)}">
+                                    <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                    <f:passThroughAttribute name="data-target" value="#modal_salvar"/>
+                                </h:commandButton>
+                            </div>
+
+                            <div class="col-sm-3 col-xs-12">
+                                <h:commandButton styleClass="btn btn-primary btn-block" value="EXCLUIR REMESSA" type="button" disabled="#{remessaController.remessa.id eq -1 or usuarioController.temPermissao('excluir_remessa') eq false}">
+                                    <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                    <f:passThroughAttribute name="data-target" value="#modal_excluir"/>
+                                </h:commandButton>
+                            </div>                            
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modal_excluir" tabindex="-1" role="dialog" aria-labelledby="myModalExcluirLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalExcluirLabel">EXCLUIR REMESSA</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        DESEJA REALMENTE EXCLUIR ESTA REMESSA?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">NÃO</button>
+                                        <h:commandButton styleClass="btn btn-primary" value="SIM" action="#{remessaController.excluir()}">
+                                            <f:ajax event="action" render="@form" />
+                                            <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                        </h:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modal_remover_detalhe_remessa" tabindex="-1" role="dialog" aria-labelledby="myModalRemoverRemessaDetalhe">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalRemoverRemessaDetalhe">REMOVER DETALHE DA REMESSA</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        DESEJA REALMENTE EXCLUIR ESTA LINHA?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <h:commandButton styleClass="btn btn-default" value="NÃO" action="#{remessaController.limparRemessaDetalhe()}">
+                                            <f:ajax event="action" render="@form" />
+                                            <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                        </h:commandButton>
+                                        <h:commandButton styleClass="btn btn-primary" value="SIM" action="#{remessaController.removerRemessaDetalhe()}">
+                                            <f:ajax event="action" render="@form" />
+                                            <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                        </h:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modal_remessa_destino" tabindex="-1" role="dialog" aria-labelledby="myModalRemessaDestino">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalRemessaDestino">REMESSA DESTINO</h4>
+                                    </div>
+
+                                    <h:panelGroup id="panel_remessa_destino" styleClass="modal-body" layout="block">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <h:messages id="message_remessa_destino" showDetail="true" class="alert #{mensagemFlash.ALERT}">
+                                                    <f:passThroughAttribute name="role" value="alert" />
+                                                </h:messages>
+                                            </div>
+                                        </div>
+
+                                        <h:panelGroup styleClass="row" layout="block" rendered="#{remessaController.novoDestino eq true}">
+                                            <div class="col-xs-6">
+                                                <h:commandLink styleClass="btn btn-info btn-block btn-sm" value="LISTA DE DESTINO">
+                                                    <f:ajax event="action" listener="#{remessaController.novaRemessaDestino(false)}" render="panel_remessa_destino"/>
+                                                </h:commandLink>
+                                            </div>
+
+                                            <div class="col-xs-6">
+                                                <h:commandLink styleClass="btn btn-info btn-block btn-sm" value="NOVO DESTINO">
+                                                    <f:ajax event="action" listener="#{remessaController.novaRemessaDestino(true)}" render="panel_remessa_destino"/>
+                                                </h:commandLink>
+                                            </div>
+
+
+                                            <div class="col-xs-12">
+                                                <hr />
+                                                <label style="font-weight: bold">Destino</label>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-6">
+                                                <div class="form-group">
+                                                    <h:inputText id="input_remessa_destino" value="#{remessaController.remessaDestino.destino}" styleClass="form-control" style="text-transform: uppercase">
+                                                        <f:ajax event="change" render="@this" />
+                                                        <f:passThroughAttribute name="placeholder" value="DESTINO DA REMESSA" />
+                                                    </h:inputText>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-6 col-sm-3">
+                                                <div class="form-group">
+                                                    <h:commandLink styleClass="btn btn-default btn-block" value="#{remessaController.remessaDestino.id eq -1 ? 'SALVAR' : 'ATUALIZAR'}">
+                                                        <f:ajax event="action" listener="#{remessaController.salvarRemessaDestino()}" render="panel_remessa_destino form_remessa:select_remessa_destino"/>
+                                                    </h:commandLink>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-6 col-sm-3">
+                                                <div class="form-group">
+                                                    <h:commandButton styleClass="btn btn-primary btn-block" value="EXCLUIR" disabled="#{remessaController.remessaDestino.id eq -1}">
+                                                        <f:ajax event="action" listener="#{remessaController.excluirRemessaDestino()}" render="panel_remessa_destino"/>
+                                                    </h:commandButton>
+                                                </div>
+                                            </div>
+                                        </h:panelGroup>
+
+                                        <h:panelGroup id="panel_remessa_destino_pessoa" layout="block" styleClass="row" rendered="#{remessaController.novoDestino eq true and remessaController.remessaDestino.id ne -1}">
+                                            <div class="col-xs-12">
+                                                <hr />
+                                                <label style="font-weight: bold">Responsável</label>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-8">
+                                                <div class="form-group">
+                                                    <h:inputText value="#{remessaController.remessaDestinoPessoa.nome_responsavel}" styleClass="form-control" style="text-transform: uppercase">
+                                                        <f:ajax event="change" render="@this" />
+                                                        <f:passThroughAttribute name="placeholder" value="NOME DO RESPONSÁVEL PELO SETOR" />
+                                                    </h:inputText>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-12 col-sm-4">
+                                                <h:commandLink styleClass="btn btn-default btn-block" value="#{remessaController.remessaDestinoPessoa.id eq -1 ? 'SALVAR' : 'ATUALIZAR'}">
+                                                    <f:ajax event="action" listener="#{remessaController.adicionarRemessaDestinoPessoa()}" render="form_remessa:panel_remessa_destino form_remessa:select_remessa_destino_pessoa"/>
+                                                </h:commandLink>
+                                            </div>
+                                            <br />
+                                            <div class="col-xs-12">
+                                                <div class="table-responsive">
+                                                    <h:dataTable id="tbl_remessa_destino_pessoa" value="#{remessaController.listaRemessaDestinoPessoa}" var="linha_remessa_destino_pessoa" styleClass="table table-striped">
+                                                        <h:column>
+                                                            <f:facet name="header">#</f:facet>
+                                                            <h:outputLabel value="#{linha_remessa_destino_pessoa.id}" />
+                                                        </h:column>
+
+                                                        <h:column>
+                                                            <f:facet name="header">Nome</f:facet>
+                                                            <h:commandLink value="#{linha_remessa_destino_pessoa.nome_responsavel}">
+                                                                <f:ajax event="action" listener="#{remessaController.selecionaRemessaDestinoPessoa(linha_remessa_destino_pessoa)}" render="form_remessa:panel_remessa_destino"/>
+                                                            </h:commandLink>
+                                                        </h:column>
+
+                                                        <h:column>
+                                                            <f:facet name="header">Excluir</f:facet>
+                                                            <h:commandLink value="X" styleClass="btn btn-default">
+                                                                <f:ajax event="action" listener="#{remessaController.deletaRemessaDestinoPessoa(linha_remessa_destino_pessoa)}" render="form_remessa:panel_remessa_destino form_remessa:select_remessa_destino_pessoa"/>
+                                                            </h:commandLink>
+                                                        </h:column>
+                                                    </h:dataTable>
+                                                </div>
+                                            </div>
+                                        </h:panelGroup>
+
+                                        <h:panelGroup styleClass="row" layout="block" rendered="#{remessaController.novoDestino eq false}">
+                                            <div class="col-xs-12">
+                                                <h:commandLink styleClass="btn btn-info btn-block btn-sm" value="NOVO DESTINO">
+                                                    <f:ajax event="action" listener="#{remessaController.novaRemessaDestino(true)}" render="panel_remessa_destino"/>
+                                                </h:commandLink>
+
+                                                <hr />
+
+                                                <div class="table-responsive">
+                                                    <h:dataTable id="tbl_remessa_destino" value="#{remessaController.listaRemessaDestinoTable}" var="linha_remessa_destino" styleClass="table table-striped">
+                                                        <h:column>
+                                                            <f:facet name="header">#</f:facet>
+                                                            <h:commandLink value="#{linha_remessa_destino.id}">
+                                                                <f:ajax event="action" listener="#{remessaController.selecionaRemessaDestino(linha_remessa_destino)}" render="form_remessa:panel_remessa_destino form_remessa:select_remessa_destino"/>
+                                                            </h:commandLink>
+                                                        </h:column>
+
+                                                        <h:column>
+                                                            <f:facet name="header">Destino</f:facet>
+                                                            <h:commandLink value="#{linha_remessa_destino.destino}">
+                                                                <f:ajax event="action" listener="#{remessaController.selecionaRemessaDestino(linha_remessa_destino)}" render="form_remessa:panel_remessa_destino"/>
+                                                            </h:commandLink>
+                                                        </h:column>
+                                                    </h:dataTable>
+                                                </div>
+                                            </div>
+                                        </h:panelGroup>
+                                    </h:panelGroup>
+
+                                    <div class="modal-footer">
+                                        <h:commandButton styleClass="btn btn-default" value="FECHAR" action="#{remessaController.novaRemessaDestino(false)}">
+                                            <f:ajax event="action" render="@form" />
+                                            <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                        </h:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div> 
+            </h:form>
+
+            <h:form id="form_remessa_salvar">
+                <!-- Modal -->
+                <div class="modal fade" id="modal_salvar" tabindex="-1" role="dialog" aria-labelledby="myModalSalvarLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalSalvarLabel">SALVAR REMESSA</h4>
+                            </div>
+                            <div class="modal-body">
+                                DESEJA REALMENTE SALVAR ESTA REMESSA?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">NÃO</button>
+
+                                <h:commandLink styleClass="btn btn-primary" value="SIM" onclick="loadConcluirSalvarRemessaFixed()">
+                                    <f:ajax event="action" render="form_remessa panel_concluir_salvar_remessa" listener="#{remessaController.salvar()}" />
+                                    <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                </h:commandLink>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="modal_concluir_salvar_remessa" tabindex="-1" role="dialog" aria-labelledby="myModalConcluirSalvarRemessaLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalConcluirSalvarRemessaLabel">REMESSA</h4>
+                            </div>
+                            <h:panelGroup id="panel_concluir_salvar_remessa" layout="block">
+                                <c:choose>
+                                    <c:when test="#{remessaController.remessaSalva eq true}">
+                                        <div class="modal-body">
+                                            <b>IMPRIMIR REMESSA AGORA?</b>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">FECHAR</button>
+                                            <h:commandLink styleClass="btn btn-primary" value="IMPRIMIR" action="#{remessaController.imprimirRemessa()}" target="_BLANK" />
+                                        </div>
+                                    </c:when>
+                                    
+                                    <c:otherwise>
+                                        <div class="modal-body">
+                                            <h:messages id="message_remessa_x" showDetail="true" class="alert #{mensagemFlash.ALERT}">
+                                                <f:passThroughAttribute name="role" value="alert" />
+                                            </h:messages>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </div><!-- /container -->
+    </h:body>
+
+    <f:subview id="footer">
+        <ui:include src="templates/footer.xhtml"/>
+    </f:subview>    
+</html>
+

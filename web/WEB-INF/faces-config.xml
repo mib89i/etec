@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2"
+              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+    <navigation-rule>
+        <navigation-case>
+            <from-outcome>index</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+        
+        <navigation-case>
+            <from-outcome>painel_de_controle</from-outcome>
+            <to-view-id>/painel_de_controle.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+        
+        <navigation-case>
+            <from-outcome>pessoa</from-outcome>
+            <to-view-id>/pessoa.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+        
+        <navigation-case>
+            <from-outcome>lista_pessoas</from-outcome>
+            <to-view-id>/lista_pessoas.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+        
+        <navigation-case>
+            <from-outcome>empresa</from-outcome>
+            <to-view-id>/empresa.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+        
+        <navigation-case>
+            <from-outcome>lista_empresas</from-outcome>
+            <to-view-id>/lista_empresas.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+
+        <navigation-case>
+            <from-outcome>oficio</from-outcome>
+            <to-view-id>/oficio.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>  
+        
+        <navigation-case>
+            <from-outcome>lista_oficios</from-outcome>
+            <to-view-id>/oficio.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>  
+        
+        <navigation-case>
+            <from-outcome>remessa</from-outcome>
+            <to-view-id>/remessa.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+        
+        <navigation-case>
+            <from-outcome>lista_remessas</from-outcome>
+            <to-view-id>/lista_remessas.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+
+        <navigation-case>
+            <from-outcome>informacao</from-outcome>
+            <to-view-id>/informação.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+
+        <navigation-case>
+            <from-outcome>configuracoes</from-outcome>
+            <to-view-id>/configuracoes.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+        
+        <navigation-case>
+            <from-outcome>grupo</from-outcome>
+            <to-view-id>/grupo.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+        
+        <navigation-case>
+            <from-outcome>lista_cargos</from-outcome>
+            <to-view-id>/lista_cargos.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+        
+        <navigation-case>
+            <from-outcome>cargo</from-outcome>
+            <to-view-id>/cargo.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+        
+        <navigation-case>
+            <from-outcome>lista_protocolo</from-outcome>
+            <to-view-id>/lista_protocolo.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+        
+        <navigation-case>
+            <from-outcome>protocolo</from-outcome>
+            <to-view-id>/protocolo.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>    
+    </navigation-rule>
+</faces-config>

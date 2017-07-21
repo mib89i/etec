@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Lista de Cargos</title>
+    </h:head>
+
+    <f:subview id="header">
+        <ui:include src="templates/header.xhtml"/>
+    </f:subview>
+
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ol class="breadcrumb">
+                        <li><h:outputLink value="painel_de_controle.xhtml">Início</h:outputLink></li>
+                        <li class="active">Lista de Cargos</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>LISTA DE CARGOS</h3>
+                    <hr />
+                </div>
+            </div>
+
+            <h:form id="form_lista_cargos">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <ul class="nav nav-pills nav-stacked">
+                            <c:choose>
+                                <c:when test="#{usuarioController.temPermissao('cargo')}">
+                                    <li>
+                                        <h:commandLink value="NOVO CARGO" action="#{cargoController.linkCadastroCargo()}"/>
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="disabled">
+                                        <a href="#" title="Sem permissão para acessar esta página!">CADASTRAR NOVO</a>
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
+                        </ul>
+                    </div>
+
+                    <div class="col-sm-9">
+                        <h:dataTable value="#{cargoController.listaCargo}" var="linha_cargo" styleClass="table table-striped">
+                            <h:column>
+                                <f:facet name="header">Código</f:facet>
+                                <h:commandLink value="#{linha_cargo.id}" action="#{cargoController.editar(linha_cargo)}" disabled="#{usuarioController.temPermissao('cargo') eq false}"/>
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">Nome</f:facet>
+                                <h:commandLink value="#{linha_cargo.nome}" action="#{cargoController.editar(linha_cargo)}" disabled="#{usuarioController.temPermissao('cargo') eq false}"/>
+                            </h:column>
+                        </h:dataTable>
+                    </div>
+                </div>
+            </h:form>
+        </div><!-- /container -->
+    </h:body>
+
+    <f:subview id="footer">
+        <ui:include src="templates/footer.xhtml"/>
+    </f:subview>    
+</html>
+

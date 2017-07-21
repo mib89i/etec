@@ -1,0 +1,1074 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Pessoas</title>
+    </h:head>
+
+    <f:subview id="header">
+        <ui:include src="templates/header.xhtml"/>
+    </f:subview>
+
+    <h:body>
+        <div class="container">
+            <h:form>
+                <h:outputScript>load_masks();</h:outputScript>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ol class="breadcrumb">
+                            <li><h:outputLink value="painel_de_controle.xhtml">Início</h:outputLink></li>
+                            <li><h:commandLink value="Lista de Pessoas" action="#{pessoaController.linkListaDePessoas()}" /></li>
+                            <li class="active">Pessoa</li>
+                        </ol>
+                    </div>
+                </div>
+            </h:form>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h3>PESSOA</h3>
+                    <hr />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h:messages id="message_pessoa" showDetail="true" class="alert #{mensagemFlash.ALERT}">
+                        <f:passThroughAttribute name="role" value="alert" />
+                    </h:messages>
+                </div>
+            </div>
+
+            <div class="row">
+                <h:form id="form_pessoa_lista_opcoes">
+                    <h:outputScript>load_masks();</h:outputScript>
+                    <div class="col-sm-3">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li><h:commandLink value="LISTAR PESSOAS" action="#{pessoaController.linkListaDePessoas()}" /></li>
+                            <li><h:commandLink value="NOVO CADASTRO" action="#{pessoaController.linkCadastroPessoa()}" /></li>
+                            <c:choose>
+                                <c:when test="#{(pessoaController.pessoa.id eq -1 or usuarioController.temPermissao('imprimir_ficha_registro') eq false) ?  'true' : 'false'}">
+                                    <li class="disabled">
+                                        <a href="#">IMPRIMIR FICHA DE CADASTRO</a>
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li>
+                                        <h:commandLink value="IMPRIMIR FICHA DE CADASTRO" action="#{pessoaController.imprimirFichaCadastro()}" target="_BLANK" />
+                                    </li>
+                                </c:otherwise>
+                            </c:choose>
+                        </ul>
+                    </div>
+                </h:form>
+
+                <div class="col-sm-9">
+                    <br />
+                    <h:form id="form_pessoa" enctype="multipart/form-data">
+                        <h:outputScript>load_masks();</h:outputScript>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-4">
+                                <div class="form-group">
+                                    <h:graphicImage value="#{pessoaController.pessoa.caminhoFoto}" alt="FOTO DA PESSOA" styleClass="img-responsive center-block"/>
+                                    <!-- Split button -->
+                                    <h:panelGroup styleClass="btn-group btn-block" layout="block">
+                                        <div class="btn-group" role="group" style="width: 80%">
+                                            <h:outputLabel for="input_upload_foto" styleClass="btn btn-default btn-block" value="Selecionar Foto">
+                                                <h:inputFile id="input_upload_foto" value="#{pessoaController.arquivo}" style="display: none">
+                                                    <f:ajax execute="@this" render="@form" listener="#{pessoaController.upload}"/>
+                                                </h:inputFile>
+                                            </h:outputLabel>
+                                        </div>
+                                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 20%" disabled="#{((pessoaController.pessoa.id eq -1 and empty pessoaController.pessoa.foto) or (pessoaController.pessoa.id ne -1 and empty pessoaController.pessoa.foto)) ? 'disabled' : ''}">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#" value="Excluir" data-toggle="modal" data-target="#modal_excluir_foto">EXCLUIR</a></li>
+                                        </ul>
+                                    </h:panelGroup>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-8">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="input_nome">Nome</label>
+                                            <h:inputText id="input_nome" value="#{pessoaController.pessoa.nome}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="NOME" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="input_sobrenome">Sobre Nome</label>
+                                            <h:inputText id="input_sobrenome" value="#{pessoaController.pessoa.sobreNome}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="SOBRE NOME" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <div class="form-group">
+                                            <label for="input_documento">CPF</label>
+                                            <h:inputText id="input_documento" value="#{pessoaController.pessoa.documento}" styleClass="form-control mask_cpf">
+                                                <f:ajax event="blur" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="CPF" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6">
+                                        <div class="form-group">
+                                            <label for="input_rg">RG</label>
+                                            <h:inputText id="input_rg" value="#{pessoaController.pessoa.rg}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="RG" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-6 col-md-6">
+                                        <div class="form-group">
+                                            <label for="input_naturalidade">Local de Nascimento</label>
+                                            <h:inputText id="input_naturalidade" value="#{pessoaController.pessoa.naturalidade}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="ex. SÃO PAULO" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6 col-md-2">
+                                        <div class="form-group">
+                                            <label for="input_naturalidade_uf">UF</label>
+                                            <h:inputText id="input_naturalidade_uf" value="#{pessoaController.pessoa.naturalidadeUF}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="ex. JD BONFIM" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6 col-md-4">
+                                        <div class="form-group">
+                                            <label for="input_data_nascimento">Data de Nascimento</label>
+                                            <h:inputText id="input_data_nascimento" value="#{pessoaController.pessoa.dataNascimentoString}" styleClass="form-control mask_data">
+                                                <f:ajax event="blur" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="ex. 12/12/1988" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6 col-md-12">
+                                        <div class="form-group">
+                                            <label for="input_nacionalidade">Nacionalidade</label>
+                                            <h:inputText id="input_nacionalidade" value="#{pessoaController.pessoa.nacionalidade}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="ex. BRASILEIRO(A)" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <label for="input_grupo">Setor</label>
+                                    <h:selectOneMenu value="#{pessoaController.indexListaGrupo}" styleClass="form-control">
+                                        <f:ajax event="change" render="@this" />
+                                        <f:selectItems value="#{pessoaController.listaGrupo}" />
+                                    </h:selectOneMenu> 
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <label for="input_cargo">Cargo</label>
+                                    <h:selectOneMenu value="#{pessoaController.indexListaCargo}" styleClass="form-control">
+                                        <f:ajax event="change" render="@this" />
+                                        <f:selectItems value="#{pessoaController.listaCargo}" />
+                                    </h:selectOneMenu> 
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <label for="input_estado_civil">Estado Civil</label>
+                                    <h:inputText value="#{pessoaController.pessoa.estadoCivil}" styleClass="form-control">
+                                        <f:ajax event="change" render="@this" />
+                                    </h:inputText> 
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-4">
+                                <div class="form-group">
+                                    <label for="input_endereco">Endereço</label>
+                                    <h:inputText id="input_endereco" value="#{pessoaController.pessoa.endereco}" styleClass="form-control">
+                                        <f:ajax event="change" render="@this" />
+                                        <f:passThroughAttribute name="placeholder" value="ex. RUA JOÃO LOPES, 321 AP. 56" />
+                                    </h:inputText>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-6 col-md-3">
+                                <div class="form-group">
+                                    <label for="input_bairro">Bairro</label>
+                                    <h:inputText id="input_bairro" value="#{pessoaController.pessoa.enderecoBairro}" styleClass="form-control">
+                                        <f:ajax event="change" render="@this" />
+                                        <f:passThroughAttribute name="placeholder" value="ex. JD BONFIM" />
+                                    </h:inputText>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-9 col-md-3 col-lg-4">
+                                <div class="form-group">
+                                    <label for="input_cidade">Cidade</label>
+                                    <h:inputText id="input_cidade" value="#{pessoaController.pessoa.enderecoCidade}" styleClass="form-control">
+                                        <f:ajax event="change" render="@this" />
+                                        <f:passThroughAttribute name="placeholder" value="ex. SÃO PAULO" />
+                                    </h:inputText>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-3 col-md-2 col-lg-1">
+                                <div class="form-group">
+                                    <label for="input_uf">UF</label>
+                                    <h:inputText id="input_uf" value="#{pessoaController.pessoa.enderecoUF}" styleClass="form-control">
+                                        <f:ajax event="change" render="@this" />
+                                        <f:passThroughAttribute name="placeholder" value="ex. SP" />
+                                    </h:inputText>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <!-- Modal -->
+                        <div class="modal fade" id="modal_excluir_foto" tabindex="-1" role="dialog" aria-labelledby="myModalExcluirFotoLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalExcluirFotoLabel">EXCLUIR PESSOA</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        DESEJA REALMENTE EXCLUIR ESTA FOTO?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">NÃO</button>
+                                        <h:commandButton styleClass="btn btn-primary" value="SIM" action="#{pessoaController.excluirFoto()}">
+                                            <f:ajax event="action" render="form_pessoa" />
+                                            <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                        </h:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+
+                    <br />
+
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-pills" role="tablist">
+                        <li role="presentation" class="active"><a href="#complemento" aria-controls="complemento" role="tab" data-toggle="tab">Complemento</a></li>
+                        <li role="presentation"><a href="#empresa" aria-controls="empresa" role="tab" data-toggle="tab">Empresa</a></li>
+                        <li role="presentation"><a href="#usuario" aria-controls="usuario" role="tab" data-toggle="tab">Usuário</a></li>
+                        <li role="presentation"><a href="#dependente" aria-controls="dependente" role="tab" data-toggle="tab">Dependentes</a></li>
+                        <li role="presentation"><a href="#sindicato" aria-controls="sindicato" role="tab" data-toggle="tab">Sindicato</a></li>
+                    </ul>
+
+                    <br />
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="complemento">
+                            <h:form id="form_pessoa_complemento">
+                                <h:outputScript>load_masks();</h:outputScript>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <div class="form-group">
+                                            <label for="input_nome_pai">Nome do Pai</label>
+                                            <h:inputText id="input_nome_pai" value="#{pessoaController.pessoa.nomePai}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="NOME DO PAI" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="input_nacionalidade_pai">Nacionalidade do Pai</label>
+                                            <h:inputText id="input_nacionalidade_pai" value="#{pessoaController.pessoa.nacionalidadePai}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="NACIONALIDADE DO PAI" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <div class="form-group">
+                                            <label for="input_nome_mae">Nome da Mãe</label>
+                                            <h:inputText id="input_nome_mae" value="#{pessoaController.pessoa.nomeMae}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="NOME DA MÃE" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label for="input_nacionalidade_mae">Nacionalidade da Mãe</label>
+                                            <h:inputText id="input_nacionalidade_mae" value="#{pessoaController.pessoa.nacionalidadeMae}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="NACIONALIDADE DO MÃE" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="panel" style="background: #f2f2f2; padding: 10px">
+                                    <h6><b>Características Físicas</b></h6>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="input_cor">Cor</label>
+                                                <h:inputText id="input_cor" value="#{pessoaController.pessoaComplemento.cor}" styleClass="form-control" title="B = Branco, P = Pardo">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. B" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="input_altura">Altura</label>
+                                                <h:inputText id="input_altura" value="#{pessoaController.pessoaComplemento.altura}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. 1,80" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="input_peso">Peso</label>
+                                                <h:inputText id="input_peso" value="#{pessoaController.pessoaComplemento.peso}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. 95" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="input_sinais">Sinais</label>
+                                                <h:inputText id="input_sinais" value="#{pessoaController.pessoaComplemento.sinais}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <div class="form-group">
+                                                <label for="input_cabelos">Cabelos</label>
+                                                <h:inputText id="input_cabelos" value="#{pessoaController.pessoaComplemento.cabelos}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. C. Escuro" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-6">
+                                            <div class="form-group">
+                                                <label for="input_olhos">Olhos</label>
+                                                <h:inputText id="input_olhos" value="#{pessoaController.pessoaComplemento.olhos}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. Azuis" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane" id="empresa">
+                            <h:form id="form_pessoa_empresa">
+                                <h:outputScript>load_masks();</h:outputScript>
+                                <div class="row">
+                                    <div class="col-xs-6 col-md-3">
+                                        <div class="form-group">
+                                            <label for="input_ctps">CTPS</label>
+                                            <h:inputText id="input_ctps" value="#{pessoaController.pessoaComplemento.ctps}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="ex. 000000" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6 col-md-3">
+                                        <div class="form-group">
+                                            <label for="input_ctps">Série</label>
+                                            <h:inputText id="input_serie" value="#{pessoaController.pessoaComplemento.serie}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="ex. 000000" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6 col-md-3">
+                                        <div class="form-group">
+                                            <label for="input_certificado_reservista">Certif. Reservista</label>
+                                            <h:inputText id="input_certificado_reservista" value="#{pessoaController.pessoaComplemento.certificadoReservista}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="ex. 000000" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6 col-md-3">
+                                        <div class="form-group">
+                                            <label for="input_categoria">Categoria</label>
+                                            <h:inputText id="input_categoria" value="#{pessoaController.pessoaComplemento.categoria}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="ex. TESTE" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="panel" style="background: #f2f2f2; padding: 10px">
+                                    <h6><b>Título de Eleitor</b></h6>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label for="input_titulo_eleitor">Tít. de Eleitor</label>
+                                                <h:inputText id="input_titulo_eleitor" value="#{pessoaController.pessoaComplemento.tituloEleitor}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. B" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label for="input_zona">Zona</label>
+                                                <h:inputText id="input_zona" value="#{pessoaController.pessoaComplemento.zona}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. 54" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label for="input_secao">Seção</label>
+                                                <h:inputText id="input_secao" value="#{pessoaController.pessoaComplemento.secao}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. X" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-6 col-sm-4">
+                                        <div class="form-group">
+                                            <label for="input_data_admissao">Data Admissão</label>
+                                            <h:inputText id="input_data_admissao" value="#{pessoaController.pessoaEmpresa.dataAdmissaoString}" styleClass="form-control mask_data">
+                                                <f:ajax event="blur" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="DATA DE ADMISSÃO" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>     
+
+                                    <div class="col-xs-6 col-sm-4">
+                                        <div class="form-group">
+                                            <label for="input_data_registro">Data Registro</label>
+                                            <h:inputText id="input_data_registro" value="#{pessoaController.pessoaEmpresa.dataRegistroString}" styleClass="form-control mask_data">
+                                                <f:ajax event="blur" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="DATA DE REGISTRO" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>     
+
+                                    <div class="col-xs-12 col-sm-4">
+                                        <div class="form-group">
+                                            <label for="input_empresa_secao">Seção</label>
+                                            <h:inputText id="input_empresa_secao" value="#{pessoaController.pessoaEmpresa.secao}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="ex. 000000" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>                                
+                                </div>                                
+
+                                <div class="row">
+                                    <div class="col-xs-6 col-sm-3">
+                                        <div class="form-group">
+                                            <label for="input_salario_inicial">Salário Inicial</label>
+                                            <h:inputText id="input_salario_inicial" value="#{pessoaController.pessoaEmpresa.salarioInicialString}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this"/>
+                                                <f:passThroughAttribute name="placeholder" value="0,00" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>     
+
+                                    <div class="col-xs-6 col-sm-3">
+                                        <div class="form-group">
+                                            <label for="input_comissao">Comissões</label>
+                                            <h:inputText id="input_comissao" value="#{pessoaController.pessoaEmpresa.comissaoString}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="0,00" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>     
+
+                                    <div class="col-xs-6 col-sm-3">
+                                        <div class="form-group">
+                                            <label for="input_tarefa">Tarefa</label>
+                                            <h:inputText id="input_tarefa" value="#{pessoaController.pessoaEmpresa.tarefa}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>    
+
+                                    <div class="col-xs-6 col-sm-3">
+                                        <div class="form-group">
+                                            <label for="input_forma_pagamento">Forma de Pagamento</label>
+                                            <h:inputText id="input_forma_pagamento" value="#{pessoaController.pessoaEmpresa.formaPagamento}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this" />
+                                                <f:passThroughAttribute name="placeholder" value="ex. Cheque" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>                                
+                                </div>   
+
+                                <div class="panel" style="background: #f2f2f2; padding: 10px">
+                                    <h6><b>Situação Perante o Fundo de Garantia</b></h6>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-3">
+                                            <div class="form-group">
+                                                <label for="input_optante">Optante</label>
+                                                <h:inputText id="input_optante" value="#{pessoaController.pessoaEmpresa.optante}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. SIM" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-6 col-sm-3">
+                                            <div class="form-group">
+                                                <label for="input_data_opcao">Data de Opção</label>
+                                                <h:inputText id="input_data_opcao" value="#{pessoaController.pessoaEmpresa.dataOpcaoString}" styleClass="form-control mask_data">
+                                                    <f:ajax event="blur" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-6 col-sm-3">
+                                            <div class="form-group">
+                                                <label for="input_data_retratacao">Data Retratação</label>
+                                                <h:inputText id="input_data_retratacao" value="#{pessoaController.pessoaEmpresa.dataRetratacaoString}" styleClass="form-control mask_data">
+                                                    <f:ajax event="blur" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-12 col-sm-3">
+                                            <div class="form-group">
+                                                <label for="input_banco_depositario">Banco Depositario</label>
+                                                <h:inputText id="input_banco_depositario" value="#{pessoaController.pessoaEmpresa.bancoDepositario}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this"/>
+                                                    <f:passThroughAttribute name="placeholder" value="ex. BANCO DO BRASIL" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                                
+
+                                <div class="panel" style="background: #f2f2f2; padding: 10px">
+                                    <h6><b>Horário de Trabalho</b></h6>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-xs-6 col-sm-3">
+                                            <div class="form-group">
+                                                <label for="input_hora_entrada">Horário de Entrada</label>
+                                                <h:inputText id="input_hora_entrada" value="#{pessoaController.pessoaEmpresa.horaEntrada}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. 10:00" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-6 col-sm-3">
+                                            <div class="form-group">
+                                                <label for="input_hora_intervalo_almoco">Intervalo Almoço</label>
+                                                <h:inputText id="input_hora_intervalo_almoco" value="#{pessoaController.pessoaEmpresa.horaIntervaloAlmoco}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. 12:00 às 13:00" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-6 col-sm-3">
+                                            <div class="form-group">
+                                                <label for="input_hora_saida">Horário de Saída</label>
+                                                <h:inputText id="input_hora_saida" value="#{pessoaController.pessoaEmpresa.horaSaida}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. 18:00" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-6 col-sm-3">
+                                            <div class="form-group">
+                                                <label for="input_descanso_semanal">Descanso Semanal</label>
+                                                <h:inputText id="input_descanso_semanal" value="#{pessoaController.pessoaEmpresa.horaDescansoSemanal}" styleClass="form-control">
+                                                    <f:ajax event="change" render="@this" />
+                                                    <f:passThroughAttribute name="placeholder" value="ex. 20 hrs" />
+                                                </h:inputText>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                                
+                            </h:form>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane" id="usuario">
+                            <h:form id="form_pessoa_usuario">
+                                <h:outputScript>load_masks();</h:outputScript>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="panel" style="background-color: #f2f2f2; padding: 10px">
+                                            <div class="row">
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label for="input_nome">Usuário</label>
+                                                        <h:inputText id="input_usuario" value="#{pessoaController.pessoa.usuario.usuario}" styleClass="form-control" disabled="#{pessoaController.pessoa.id ne -1}">
+                                                            <f:ajax event="change" render="@this" />
+                                                            <f:passThroughAttribute name="placeholder" value="NOME DE USUÁRIO" />
+                                                        </h:inputText>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label for="input_senha">Senha</label>
+                                                        <h:inputSecret id="input_senha" value="#{pessoaController.pessoa.usuario.senha}" styleClass="form-control" disabled="#{pessoaController.pessoa.id ne -1}" redisplay="true">
+                                                            <f:ajax event="change" render="@this" />
+                                                            <f:passThroughAttribute name="placeholder" value="DIGITE A SENHA" />
+                                                        </h:inputSecret>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label for="input_senha">Confirme a Senha</label>
+                                                        <h:inputSecret id="input_confirme_senha" value="#{pessoaController.confirmeSenha}" styleClass="form-control" disabled="#{pessoaController.pessoa.id ne -1}" redisplay="true">
+                                                            <f:ajax event="change" render="@this" />
+                                                            <f:passThroughAttribute name="placeholder" value="CONFIRME A SENHA" />
+                                                        </h:inputSecret>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <h:commandButton styleClass="btn btn-info btn-xs" value="Editar Usuário" type="button" style="float: right" disabled="#{pessoaController.pessoa.id eq -1 or usuarioController.temPermissao('editar_usuario') eq false}">
+                                                        <f:ajax event="click" render="form_pessoa:panel_editar_usuario message_pessoa" />
+                                                        <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                                        <f:passThroughAttribute name="data-target" value="#modal_editar_usuario"/>
+                                                    </h:commandButton>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal -->
+                                <div class="modal fade" id="modal_editar_usuario" tabindex="-1" role="dialog" aria-labelledby="myModalEditarUsuarioLabel">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalEditarUsuarioLabel">EDITAR USUÁRIO</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="panel" style="background-color: #f2f2f2; padding: 10px">
+                                                            <div class="row">
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label for="input_nome">Usuário</label>
+                                                                        <h:inputText id="input_editar_usuario" value="#{pessoaController.pessoa.usuario.usuario}" styleClass="form-control">
+                                                                            <f:ajax event="change" render="@this" />
+                                                                            <f:passThroughAttribute name="placeholder" value="NOME DE USUÁRIO" />
+                                                                        </h:inputText>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label for="input_senha">Senha</label>
+                                                                        <h:inputSecret id="input_editar_senha" value="#{pessoaController.pessoa.usuario.senha}" styleClass="form-control" redisplay="true">
+                                                                            <f:ajax event="change" render="@this" />
+                                                                            <f:passThroughAttribute name="placeholder" value="DIGITE A SENHA" />
+                                                                        </h:inputSecret>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label for="input_senha">Confirme a Senha</label>
+                                                                        <h:inputSecret id="input_editar_confirme_senha" value="#{pessoaController.confirmeSenha}" styleClass="form-control" redisplay="true">
+                                                                            <f:ajax event="change" render="@this" />
+                                                                            <f:passThroughAttribute name="placeholder" value="CONFIRME A SENHA" />
+                                                                        </h:inputSecret>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>                                        
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">CANCELAR</button>
+                                                <h:commandButton styleClass="btn btn-primary" value="SALVAR" action="#{pessoaController.salvarEditarUsuario()}">
+                                                    <f:ajax event="action" render="@form message_pessoa" />
+                                                    <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                                </h:commandButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane" id="dependente">
+                            <h:form id="form_pessoa_dependente">
+                                <h:outputScript>load_masks();</h:outputScript>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h:messages id="message_pessoa_dependente" showDetail="true" class="alert #{mensagemFlash.ALERT}">
+                                            <f:passThroughAttribute name="role" value="alert" />
+                                        </h:messages>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-lg-5">
+                                        <div class="form-group">
+                                            <label for="input_dependente_nome">Nome</label>
+                                            <h:inputText id="input_dependente_nome" value="#{pessoaController.pessoaDependente.nome}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this message_pessoa_dependente" />
+                                                <f:passThroughAttribute name="placeholder" value="NOME DO DEPENDENTE" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6 col-sm-6 col-lg-3">
+                                        <div class="form-group">
+                                            <label for="input_dependente_parentesco">Parentesco</label>
+                                            <h:inputText id="input_dependente_parentesco" value="#{pessoaController.pessoaDependente.parentesco}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this message_pessoa_dependente" />
+                                                <f:passThroughAttribute name="placeholder" value="PARENTESCO DO DEPENDENTE" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6 col-sm-3 col-lg-2">
+                                        <div class="form-group">
+                                            <label for="input_dependente_data_nascimento">Nascimento</label>
+                                            <h:inputText id="input_dependente_data_nascimento" value="#{pessoaController.pessoaDependente.dataNascimentoString}" styleClass="form-control mask_data">
+                                                <f:ajax event="blur" render="@this message_pessoa_dependente" />
+                                                <f:passThroughAttribute name="placeholder" value="DATA" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-3 col-lg-2">
+                                        <br />
+                                        <h:commandButton styleClass="btn btn-default btn-block" value="#{pessoaController.indexPessoaDependente != -1 ? 'SALVAR' : 'ADICIONAR'}" type="button" action="#{pessoaController.adicionarDependente()}">
+                                            <f:ajax event="action" render="form_pessoa_dependente"/>
+                                        </h:commandButton>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <h:dataTable id="tbl_dependentes" value="#{pessoaController.listaPessoaDependente}" var="linha_pessoa_dependente" styleClass="table table-striped" binding="#{dataTableHtml.dataTable}">
+                                        <h:column>
+                                            <f:facet name="header">Nome</f:facet>
+                                            <h:commandLink value="#{linha_pessoa_dependente.nome}">
+                                                <f:ajax event="action" listener="#{pessoaController.selecionaDependente(linha_pessoa_dependente, dataTableHtml.dataTable.rowIndex)}" render="@form"/>
+                                            </h:commandLink>
+                                        </h:column>
+
+                                        <h:column>
+                                            <f:facet name="header">Parentesco</f:facet>
+                                            <h:commandLink value="#{linha_pessoa_dependente.parentesco}">
+                                                <f:ajax event="action" listener="#{pessoaController.selecionaDependente(linha_pessoa_dependente, dataTableHtml.dataTable.rowIndex)}" render="@form"/>
+                                            </h:commandLink>
+                                        </h:column>
+
+                                        <h:column>
+                                            <f:facet name="header">Nascimento</f:facet>
+                                            <h:commandLink value="#{linha_pessoa_dependente.dataNascimentoString}">
+                                                <f:ajax event="action" listener="#{pessoaController.selecionaDependente(linha_pessoa_dependente, dataTableHtml.dataTable.rowIndex)}" render="@form"/>
+                                            </h:commandLink>
+                                        </h:column>
+
+                                        <h:column>
+                                            <f:facet name="header"></f:facet>
+                                            <h:commandLink styleClass="btn btn-default btn-block" type="button" title="REMOVER ESTE DEPENDENTE">
+                                                <f:ajax event="action" listener="#{pessoaController.selecionaDependente(linha_pessoa_dependente, dataTableHtml.dataTable.rowIndex)}"/>
+                                                <span class="glyphicon glyphicon-remove">
+                                                    <f:passThroughAttribute name="aria-hidden" value="true"/>
+                                                </span>
+                                                <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                                <f:passThroughAttribute name="data-target" value="#modal_remover_dependente"/>
+                                            </h:commandLink>
+                                        </h:column>
+                                    </h:dataTable>
+                                </div>
+
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="modal_remover_dependente" tabindex="-1" role="dialog" aria-labelledby="myModalRemoverDependenteLabel">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalRemoverDependenteLabel">REMOVER DEPENDENTE</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                DESEJA REALMENTE EXCLUIR ESTE DEPENDENTE?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">NÃO</button>
+                                                <h:commandButton styleClass="btn btn-primary" value="SIM" action="#{pessoaController.removerDependente()}">
+                                                    <f:ajax event="action" render="@form" />
+                                                    <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                                </h:commandButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane" id="sindicato">
+                            <h:form id="form_pessoa_sindicato">
+                                <h:outputScript>load_masks();</h:outputScript>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h:messages id="message_pessoa_sindicato" showDetail="true" class="alert #{mensagemFlash.ALERT}">
+                                            <f:passThroughAttribute name="role" value="alert" />
+                                        </h:messages>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-lg-5">
+                                        <div class="form-group">
+                                            <label for="input_sindicato_favorecido">Sindicato Favorecido</label>
+                                            <h:inputText id="input_sindicato_favorecido" value="#{pessoaController.pessoaSindicatoFavorecido.sindicato}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this message_pessoa_sindicato" />
+                                                <f:passThroughAttribute name="placeholder" value="NOME DO SINDICATO FAVIRECIDO" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6 col-sm-6 col-lg-3">
+                                        <div class="form-group">
+                                            <label for="input_sindicato_ano">Ano</label>
+                                            <h:inputText id="input_sindicato_ano" value="#{pessoaController.pessoaSindicatoFavorecido.ano}" styleClass="form-control">
+                                                <f:ajax event="change" render="@this message_pessoa_sindicato" />
+                                                <f:passThroughAttribute name="placeholder" value="ANO" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6 col-sm-3 col-lg-2">
+                                        <div class="form-group">
+                                            <label for="input_sindicato_valor">Valor</label>
+                                            <h:inputText id="input_sindicato_valor" value="#{pessoaController.pessoaSindicatoFavorecido.valorString}" styleClass="form-control" >
+                                                <f:ajax event="change" render="@this message_pessoa_sindicato" />
+                                                <f:passThroughAttribute name="placeholder" value="0,00" />
+                                            </h:inputText>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-3 col-lg-2">
+                                        <br />
+                                        <h:commandButton styleClass="btn btn-default btn-block" value="#{pessoaController.indexPessoaSindicato!= -1 ? 'SALVAR' : 'ADICIONAR'}" type="button" action="#{pessoaController.adicionarSindicato()}">
+                                            <f:ajax event="action" render="form_pessoa_sindicato"/>
+                                        </h:commandButton>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <h:dataTable id="tbl_sindicatos" value="#{pessoaController.listaPessoaSindicato}" var="linha_pessoa_sindicato" styleClass="table table-striped" binding="#{dataTableHtml2.dataTable}">
+                                        <h:column>
+                                            <f:facet name="header">Ano</f:facet>
+                                            <h:commandLink value="#{linha_pessoa_sindicato.ano}">
+                                                <f:ajax event="action" listener="#{pessoaController.selecionaSindicato(linha_pessoa_sindicato, dataTableHtml2.dataTable.rowIndex)}" render="@form"/>
+                                            </h:commandLink>
+                                        </h:column>
+
+                                        <h:column>
+                                            <f:facet name="header">Sindicato</f:facet>
+                                            <h:commandLink value="#{linha_pessoa_sindicato.sindicato}">
+                                                <f:ajax event="action" listener="#{pessoaController.selecionaSindicato(linha_pessoa_sindicato, dataTableHtml2.dataTable.rowIndex)}" render="@form"/>
+                                            </h:commandLink>
+                                        </h:column>
+
+                                        <h:column>
+                                            <f:facet name="header">Valor</f:facet>
+                                            <h:commandLink value="#{linha_pessoa_sindicato.valorString}">
+                                                <f:ajax event="action" listener="#{pessoaController.selecionaSindicato(linha_pessoa_sindicato, dataTableHtml2.dataTable.rowIndex)}" render="@form"/>
+                                            </h:commandLink>
+                                        </h:column>
+
+                                        <h:column>
+                                            <f:facet name="header"></f:facet>
+                                            <h:commandLink styleClass="btn btn-default btn-block" type="button" title="REMOVER ESTE SINDICATO">
+                                                <f:ajax event="action" listener="#{pessoaController.selecionaSindicato(linha_pessoa_sindicato, dataTableHtml2.dataTable.rowIndex)}"/>
+                                                <span class="glyphicon glyphicon-remove">
+                                                    <f:passThroughAttribute name="aria-hidden" value="true"/>
+                                                </span>
+                                                <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                                <f:passThroughAttribute name="data-target" value="#modal_remover_sindicato"/>
+                                            </h:commandLink>
+                                        </h:column>
+                                    </h:dataTable>
+                                </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="modal_remover_sindicato" tabindex="-1" role="dialog" aria-labelledby="myModalRemoverSindicatoLabel">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalRemoverSindicatoLabel">REMOVER SINDICATO</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                DESEJA REALMENTE EXCLUIR ESTE SINDICATO?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">NÃO</button>
+                                                <h:commandButton styleClass="btn btn-primary" value="SIM" action="#{pessoaController.removerSindicato()}">
+                                                    <f:ajax event="action" render="@form" />
+                                                    <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                                </h:commandButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <h:form id="form_pessoa_salvar">
+                        <h:outputScript>load_masks();</h:outputScript>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <hr />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-3 col-xs-12">
+                                <h:commandButton styleClass="btn btn-default btn-block" value="#{(pessoaController.pessoa.id eq -1) ? 'SALVAR CADASTRO' : 'ALTERAR CADASTRO'}" type="button" disabled="#{(pessoaController.pessoa.id eq -1 and usuarioController.temPermissao('salvar_pessoa') ne true) or (pessoaController.pessoa.id ne -1 and usuarioController.temPermissao('alterar_pessoa') ne true)}">
+                                    <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                    <f:passThroughAttribute name="data-target" value="#modal_salvar"/>
+                                </h:commandButton>
+                            </div>
+
+                            <div class="col-sm-3 col-xs-12">
+                                <h:commandButton styleClass="btn btn-primary btn-block" value="EXCLUIR CADASTRO" type="button" disabled="#{pessoaController.pessoa.id eq -1 or usuarioController.temPermissao('excluir_pessoa') eq false}">
+                                    <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                    <f:passThroughAttribute name="data-target" value="#modal_excluir"/>
+                                </h:commandButton>
+                            </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modal_salvar" tabindex="-1" role="dialog" aria-labelledby="myModalSalvarLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalSalvarLabel">SALVAR PESSOA</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        DESEJA REALMENTE SALVAR ESTA PESSOA?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">NÃO</button>
+                                        <h:commandButton styleClass="btn btn-primary" value="SIM" action="#{pessoaController.salvar()}">
+                                            <f:ajax event="action" render="@form form_pessoa_lista_opcoes form_pessoa_usuario form_pessoa_dependente message_pessoa" />
+                                            <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                        </h:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modal_excluir" tabindex="-1" role="dialog" aria-labelledby="myModalExcluirLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalExcluirLabel">EXCLUIR PESSOA</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        DESEJA REALMENTE EXCLUIR ESTA PESSOA?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">NÃO</button>
+                                        <h:commandButton styleClass="btn btn-primary" value="SIM" action="#{pessoaController.excluir()}">
+                                            <f:ajax event="action" render="form_pessoa_lista_opcoes form_pessoa form_pessoa_complemento form_pessoa_usuario form_pessoa_empresa form_pessoa_salvar form_pessoa_dependente message_pessoa" />
+                                            <f:passThroughAttribute name="data-dismiss" value="modal" />
+                                        </h:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div><!-- /container -->
+    </h:body>
+
+    <f:subview id="footer">
+        <ui:include src="templates/footer.xhtml"/>
+    </f:subview>
+</html>
+
